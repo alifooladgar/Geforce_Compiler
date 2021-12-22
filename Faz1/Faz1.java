@@ -115,3 +115,10 @@ public class Faz1 {
         }
         map.put(arr[1], st.toString());
     }
+   static void undef(String line){
+        String[] arr = line.split(" ");
+        if (line.length() < 3)
+            return;
+        map.remove(arr[1]);
+    }
+}
