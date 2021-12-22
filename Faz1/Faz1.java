@@ -21,3 +21,52 @@ public class Faz1 {
         Scanner sc = new Scanner(cfile);
         File output = new File(mainaddress+"\\faz1.txt");
         FileOutputStream fout = new FileOutputStream(output);
+        /////////// pre-process
+        while(sc.hasNextLine()) {
+            String line = sc.nextLine();
+            if (line.contains("//")) {
+                int index = line.indexOf("//");
+                if (index==0)
+                    continue;
+                line = line.substring(0, index - 1);
+            }
+            if (line.length() == 0)
+                continue;
+            String[] arr = line.split(" ");
+            if (arr[0].equals("#include")) {
+                String address = arr[1].substring(1 , arr[1].length()-1);
+                File lib = new File(mainaddress+"\\" + address);
+                Scanner scanner = new Scanner(lib);
+                while (scanner.hasNextLine()) {
+                    String libline = scanner.nextLine();
+                    if (libline.contains("//")) {
+                        int index = libline.indexOf("//");
+                        libline = libline.substring(0, index - 1);
+                    }
+                    if (libline.length() == 0)
+                        continue;
+                    String[] liblinearr = libline.split(" ");
+                    switch (liblinearr[0]) {
+                        case "#define":
+                            define(libline);
+                            break;
+                        case "#undef":
+                            undef(libline);
+                            break;
+                        case "#ifndef":
+                            define(scanner.nextLine());
+                            scanner.nextLine();
+                            break;
+                        default:
+                            for (String i : liblinearr) {
+                                if(i.contains(";"))
+                                    i = i.replace(";","");
+                                if (map.containsKey(i)) {
+                                    libline = libline.replace(i, map.get(i));
+                                }
+                            }
+                            fout.write((libline+"\n").getBytes());
+                            break;
+                    }
+                }
+            }
