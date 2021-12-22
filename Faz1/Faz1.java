@@ -70,3 +70,48 @@ public class Faz1 {
                     }
                 }
             }
+            switch (arr[0]) {
+                case "#define":
+                    define(line);
+                    break;
+                case "#include":
+                    break;
+                case "#undef":
+                    undef(line);
+                    break;
+                case "#ifndef":
+                    define(sc.nextLine());
+                    sc.nextLine();
+                    break;
+                default:
+                    for (String i : arr) {
+                        if(i.contains(";"))
+                            i = i.replace(";","");
+                        if (map.containsKey(i)) {
+                            line = line.replace(i, map.get(i));
+                        }
+                    }
+                    fout.write((line+"\n").getBytes());
+                    break;
+            }
+        }
+        //////////////////////////
+        System.out.println("faz1 is done");
+        Desktop desktop = Desktop.getDesktop();
+        desktop.open(output);
+    }
+    static void define(String line){
+        String[] arr = line.split(" ");
+        if (map.containsKey(arr[1]))
+            return;
+        StringBuilder st = new StringBuilder();
+        if (line.length() < 3)
+            return;
+        for(int i=2; i<arr.length;i++) {
+            if (i!= arr.length-1)
+                st.append(arr[i]).append(" ");
+            else
+                st.append(arr[i]);
+        }
+        map.put(arr[1], st.toString());
+    }
