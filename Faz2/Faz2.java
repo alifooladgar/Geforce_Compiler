@@ -28,7 +28,7 @@ public class Faz2 {
         Scanner sc = new Scanner(faz1);
         File output = new File(mainaddress+"\\faz2.txt");
         fout = new FileOutputStream(output);
-        ////////////////////////// lexical analysis
+        ////////////////////////// lexical analysis (state)
         while (sc.hasNextLine()){
             line = sc.nextLine();
             lineNumber++;
@@ -148,25 +148,25 @@ public class Faz2 {
         fout.write((lineNumber+"keyword :: for"+"\n").getBytes());
         ws();
         if(i<line.length()&&isPunc(line.charAt(i)))
-            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write((lineNumber + " " + i +" punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
         decStmt();
         ws();
         if(i<line.length()&&isPunc(line.charAt(i)))
-            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write((lineNumber + " " + i +"punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
         exprStmt();
         ws();
         if(i<line.length()&&isPunc(line.charAt(i)))
-            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write((lineNumber + " " + i +"punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
         operationStmt();
         ws();
         if(i<line.length()&&isPunc(line.charAt(i)))
-            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write((lineNumber + " " + i +"punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
         if(i<line.length()&&isPunc(line.charAt(i)))
-            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write((lineNumber + " " + i +"punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
     }
     // 10
@@ -199,27 +199,27 @@ public class Faz2 {
         }
         switch (st.toString()){
             case ">":
-                fout.write((lineNumber+"relOp :: >"+"\n").getBytes());
+                fout.write((lineNumber + " " + i +" relOp :: >"+"\n").getBytes());
                 ws();
                 break;
             case "<":
-                fout.write((lineNumber+"relOp :: <"+"\n").getBytes());
+                fout.write((lineNumber + " " + i +" relOp :: <"+"\n").getBytes());
                 ws();
                 break;
             case "!=":
-                fout.write((lineNumber+"relOp :: !="+"\n").getBytes());
+                fout.write((lineNumber + " " + i  +" relOp :: !="+"\n").getBytes());
                 ws();
                 break;
             case "==":
-                fout.write((lineNumber+"relOp :: =="+"\n").getBytes());
+                fout.write((lineNumber + " " + i +" relOp :: =="+"\n").getBytes());
                 ws();
                 break;
             case ">=":
-                fout.write((lineNumber+"relOp :: >="+"\n").getBytes());
+                fout.write((lineNumber + " " + i +" relOp :: >="+"\n").getBytes());
                 ws();
                 break;
             case "<=":
-                fout.write((lineNumber+"relOp :: <="+"\n").getBytes());
+                fout.write((lineNumber + " " + i  +" relOp :: <="+"\n").getBytes());
                 ws();
                 break;
         }
@@ -233,19 +233,19 @@ public class Faz2 {
     // 5
     static void idStmt(String name)throws IOException{
         ws();
-        fout.write((lineNumber+"identifier :: "+ name+"\n").getBytes());
+        fout.write((lineNumber + " " + i +" identifier :: "+ name+"\n").getBytes());
         ws();
     }
     static void idStmt()throws IOException{
         ws();
-        if (!((((int)line.charAt(i))>=65 &&((int)line.charAt(i))<=90) || (((int)line.charAt(i))>=97 &&((int)line.charAt(i))<=122)))
+        if (i<line.length()&&!((((int)line.charAt(i))>=65 &&((int)line.charAt(i))<=90) || (((int)line.charAt(i))>=97 &&((int)line.charAt(i))<=122)))
             return;
-        System.out.println(lineNumber + "  :  " +line.charAt(i));
         StringBuilder st = new StringBuilder();
-        String others = "(){}, \t\n;-=+*-/%";
+        String others = ".,<>(){}, \t\n;-=+*-/%";
         int index=i;
-        while (!others.contains(line.charAt(index)+""))
+        while (i<line.length()&&!others.contains(line.charAt(index)+""))
             st.append(line.charAt(index++));
+        // array
         if (st.toString().contains("[")){
             StringBuilder stringBuilder = new StringBuilder();
             ws();
@@ -277,31 +277,32 @@ public class Faz2 {
     // 6
     static void valueStmt()throws IOException{
         ws();
-        if (((int)line.charAt(i))>=48 &&((int)line.charAt(i))<=57){
+        if (i<line.length()&&((int)line.charAt(i))>=48 &&((int)line.charAt(i))<=57){
             numberStmt();
         }
         else{
             ws();
             StringBuilder st = new StringBuilder();
-            String others = "(){}[], \t\n;";
+            String others = "(){}, \t\n;+-*/";
             int index=i;
             ws();
-            while (others.contains(line.charAt(index)+"")){
+            while (i<line.length()&&!others.contains(line.charAt(index)+"")){
                 st.append(line.charAt(index));
                 index++;
             }
             ws();
             if (st.toString().equals("true"))
-                fout.write((lineNumber+"boolean :: true"+"\n").getBytes());
+                fout.write((lineNumber + " " + i +" boolean :: true"+"\n").getBytes());
             if (st.toString().equals("false"))
-                fout.write((lineNumber+"boolean :: false"+"\n").getBytes());
+                fout.write((lineNumber + " " + i +" boolean :: false"+"\n").getBytes());
             else if (!others.contains(st.toString()))
                 idStmt(st.toString());
-            i=index+1;
+            i=index;
             ws();
         }
         ws();
-        while (isOp(line.charAt(i))){
+        while (i<line.length()&&isOp(line.charAt(i))){
+            fout.write((lineNumber + " " + i +" operator :: "+line.charAt(i++)+"\n").getBytes());
             idStmt();
             numberStmt();
         }
@@ -366,11 +367,12 @@ public class Faz2 {
         idStmt();
         ws();
         if (i<line.length()&&line.charAt(i)=='=') {
+            fout.write((lineNumber + " " + i +" operator :: "+line.charAt(i++)+"\n").getBytes());
             valueStmt();
             ws();
         }
         if (i<line.length()&&isPunc(line.charAt(i)))
-            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write((lineNumber + " " + i +" punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
     }
     // 3
@@ -383,11 +385,11 @@ public class Faz2 {
             stringBuilder.append('0').append(line.charAt(i++));
         ws();
         String other = "{}[] \t\n;,";
-        while (!other.contains(line.charAt(i)+"")){
+        while (i<line.length()&&!other.contains(line.charAt(i)+"")){
             stringBuilder.append(line.charAt(i++));
             ws();
         }
-        fout.write((lineNumber+"number :: "+stringBuilder+"\n").getBytes());
+        fout.write((lineNumber + " " + i +" number :: "+stringBuilder+"\n").getBytes());
         ws();
     }
     //
@@ -398,5 +400,13 @@ public class Faz2 {
     static boolean isOp(char in){
         String others = "+-*/%";
         return others.contains(in+"");
+    }
+    static boolean isKeyword(String in){
+        String keys = "int  float double  long  boolean  if  while  for else  return  void ";
+        return keys.contains(in);
+    }
+    // 16
+    static void typeStmt(){
+        
     }
 }
