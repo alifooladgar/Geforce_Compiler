@@ -1,3 +1,4 @@
+package com.company.sample;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
@@ -21,7 +22,7 @@ public class Faz1 {
         Scanner sc = new Scanner(cfile);
         File output = new File(mainaddress+"\\faz1.txt");
         FileOutputStream fout = new FileOutputStream(output);
-        /////////// pre-process
+        /////////////////// pre process
         while(sc.hasNextLine()) {
             String line = sc.nextLine();
             if (line.contains("//")) {
@@ -65,6 +66,26 @@ public class Faz1 {
                                     libline = libline.replace(i, map.get(i));
                                 }
                             }
+                            // ++
+                            if (libline.contains("++")){
+                                int pindex = libline.indexOf("++");
+                                StringBuilder id = new StringBuilder();
+                                String other = " \n\t+*/;.,";
+                                pindex--;
+                                while (pindex>=0&&!other.contains(libline.charAt(pindex)+""))
+                                    id  .append(libline.charAt(pindex--));
+                                libline = libline.replace(id+"++" , id + " =" + id + "+1");
+                            }
+                            /// --
+                            if (libline.contains("--")){
+                                int pindex = libline.indexOf("--");
+                                StringBuilder id = new StringBuilder();
+                                String other = " \n\t+*/;.,";
+                                pindex--;
+                                while (pindex>=0&&!other.contains(libline.charAt(pindex)+""))
+                                    id.append(libline.charAt(pindex--));
+                                libline = libline.replace(id+"--" , id + " =" + id+ "-1");
+                            }
                             fout.write((libline+"\n").getBytes());
                             break;
                     }
@@ -91,7 +112,34 @@ public class Faz1 {
                             line = line.replace(i, map.get(i));
                         }
                     }
+                    boolean flag = false;
+                    if (line.charAt(line.length()-1)== '{' && line.length()>1){
+                        line = line.substring(0 , line.length()-1);
+                        flag = true;
+                    }
+                    // ++
+                    if (line.contains("++")){
+                        int pindex = line.indexOf("++");
+                        StringBuilder id = new StringBuilder();
+                        String other = " \n\t+*/;.,";
+                        pindex--;
+                        while (pindex>=0&&!other.contains(line.charAt(pindex)+""))
+                            id  .append(line.charAt(pindex--));
+                        line = line.replace(id+"++" , id + " =" + id + "+1");
+                    }
+                    /// --
+                    if (line.contains("--")){
+                        int pindex = line.indexOf("--");
+                        StringBuilder id = new StringBuilder();
+                        String other = " \n\t+*/;.,";
+                        pindex--;
+                        while (pindex>=0&&!other.contains(line.charAt(pindex)+""))
+                            id  .append(line.charAt(pindex--));
+                        line = line.replace(id+"--" , id + " =" + id+ "-1");
+                    }
                     fout.write((line+"\n").getBytes());
+                    if (flag)
+                        fout.write(("{" + "\n").getBytes());
                     break;
             }
         }
@@ -115,7 +163,7 @@ public class Faz1 {
         }
         map.put(arr[1], st.toString());
     }
-   static void undef(String line){
+    static void undef(String line){
         String[] arr = line.split(" ");
         if (line.length() < 3)
             return;
