@@ -1,0 +1,14 @@
+#define START int main() {
+#define END }
+#define END_OF_LINE ;
+#define Num
+int ali(){
+int a= 5;
+a++;
+}
+while (1){
+int c = 5;
+}
+else {
+
+}

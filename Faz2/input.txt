@@ -1,0 +1,29 @@
+#include "mylib.txt"
+START
+int arr[6]; 
+int sum = 0;
+int sumo = 0;
+int sumt = 0;
+int mul = 0;
+arr[0] = 0x12;
+arr[1] = 0x03;
+mul = arr[0] * arr[1];
+sumo = mul + sum ;
+sum = sumo + sumt ;
+arr[2] = 0x11;
+arr[3] = 0x04;
+mul = arr[2] * arr[3];
+sumo = mul + sum ;
+sum = sumo + sumt ;
+mul = arr[4] * arr[5];
+sumo = mul + sum ;
+sum = sumo + sumt ;
+
+int number = 3 END_OF_LINE
+int total = number / sum END_OF_LINE
+
+int end = 1 END_OF_LINE
+if(end)
+   return 0 END_OF_LINE
+
+END
