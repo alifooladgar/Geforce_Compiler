@@ -31,7 +31,7 @@ public class Faz2 {
             line = sc.nextLine();
             lineNumber++;
             ws();
-            String others = "(){}[], \t\n;";
+            String others = "(){}, \t\n;";
             StringBuilder st = new StringBuilder();
             if (i<line.length()&&others.contains(line.charAt(i)+""))
                 if(isPunc(line.charAt(i)))
@@ -118,10 +118,10 @@ public class Faz2 {
         ws();
         exprStmt();
         ws();
-        if(isPunc(line.charAt(i)))
+        if(i<line.length()&&isPunc(line.charAt(i)))
             fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
-        if (line.charAt(i)!='\n')
+        if (i<line.length()&&line.charAt(i)!='\n')
             if(isPunc(line.charAt(i)))
                 fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
@@ -183,9 +183,11 @@ public class Faz2 {
     static void relOpStmt()throws IOException{
         ws();
         StringBuilder st = new StringBuilder();
+        if (i>=line.length())
+            return;
         st.append(line.charAt(i++));
         ws();
-        if (line.charAt(i)=='=') {
+        if (i<line.length()&&line.charAt(i)=='=') {
             st.append("=");
             i++;
             ws();
@@ -223,8 +225,41 @@ public class Faz2 {
     static void idStmt(String name)throws IOException{
         if (name.isEmpty())
             return;
+//        if (name.toString().contains("[")){
+//            StringBuilder stringBuilder = new StringBuilder();
+//            int index =0;
+//            ws();
+//            while (i<line.length()&&name.charAt(index)!='['){
+//                stringBuilder.append(name.charAt(index++));
+//            }
+//            ws();
+//            idStmt(stringBuilder.toString());
+//            fout.write((lineNumber+"punctuation :: "+name.charAt(index++)+"\n").getBytes());
+//            ws();
+//            stringBuilder = new StringBuilder();
+//            boolean flag=false;
+//            while (name.toString().charAt(index)!=']'){
+//                stringBuilder.append(name.charAt(index++));
+//                flag=true;
+//                ws();
+//            }
+//            ws();
+//            if (flag)
+//                fout.write((lineNumber+"number :: "+stringBuilder+"\n").getBytes());
+//            ws();
+//            fout.write((lineNumber+"punctuation :: "+name.charAt(index)+"\n").getBytes());
+//            ws();
+//        }
         ws();
         fout.write((lineNumber + " " + i +" identifier :: "+ name+"\n").getBytes());
+        ws();
+        if (i<line.length()&&isOp(line.charAt(i)))
+            fout.write((lineNumber+"operator :: "+line.charAt(i++)+"\n").getBytes());
+        ws();
+        valueStmt();
+        ws();
+        if (i<line.length()&&isPunc(line.charAt(i)))
+            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
     }
     static void idStmt()throws IOException{
@@ -237,33 +272,44 @@ public class Faz2 {
         while (i<line.length()&&!others.contains(line.charAt(i)+""))
             st.append(line.charAt(i++));
         // array
-        if (st.toString().contains("[")){
-            StringBuilder stringBuilder = new StringBuilder();
-            ws();
-            while (st.toString().charAt(i)!='['){
-                stringBuilder.append(st.toString().charAt(i++));
-            }
-            ws();
-            idStmt(stringBuilder.toString());
-            fout.write((lineNumber+"punctuation :: ["+"\n").getBytes());
-            ws();
-            stringBuilder = new StringBuilder();
-            boolean flag=false;
-            while (st.toString().charAt(i)!=']'){
-                stringBuilder.append(st.toString().charAt(i));
-                flag=true;
-                ws();
-            }
-            ws();
-            if (flag)
-                fout.write((lineNumber+"number :: "+stringBuilder+"\n").getBytes());
-            ws();
-            fout.write((lineNumber+"punctuation :: ]"+"\n").getBytes());
-            ws();
-        }
-        else
+//        if (st.toString().contains("[")){
+//            StringBuilder stringBuilder = new StringBuilder();
+//            int index =0;
+//            ws();
+//            while (i<line.length()&&st.toString().charAt(index)!='['){
+//                stringBuilder.append(st.toString().charAt(index++));
+//            }
+//            ws();
+//            idStmt(stringBuilder.toString());
+//            fout.write((lineNumber+"punctuation :: "+st.toString().charAt(index++)+"\n").getBytes());
+//            ws();
+//            stringBuilder = new StringBuilder();
+//            boolean flag=false;
+//            while (st.toString().charAt(index)!=']'){
+//                stringBuilder.append(st.toString().charAt(index++));
+//                flag=true;
+//                ws();
+//            }
+//            ws();
+//            if (flag)
+//                fout.write((lineNumber+"number :: "+stringBuilder+"\n").getBytes());
+//            ws();
+//            fout.write((lineNumber+"punctuation :: "+st.toString().charAt(index)+"\n").getBytes());
+//            ws();
+//        }
+        //else
             fout.write((lineNumber+"identifier :: "+st+"\n").getBytes());
         //i=index;
+        ws();
+        // a = 5 +3;
+        if (i<line.length()&&isOp(line.charAt(i)))
+            fout.write((lineNumber+"operator :: "+line.charAt(i++)+"\n").getBytes());
+        ws();
+        valueStmt();
+        ws();
+        if (i<line.length()&&isPunc(line.charAt(i)))
+            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+        ws();
     }
     // 6
     static void valueStmt()throws IOException{
@@ -304,6 +350,9 @@ public class Faz2 {
         ws();
         valueStmt();
         ws();
+        String relop = "<= >= == != < >";
+        if (i<line.length()&&!relop.contains(line.charAt(i)+""))
+            return;
         relOpStmt();
         ws();
         valueStmt();
@@ -388,13 +437,15 @@ public class Faz2 {
     // 3
     static void numberStmt()throws IOException{
         ws();
-        if (!(((int)line.charAt(i))>=48 &&((int)line.charAt(i))<=57))
+        if (i<line.length()&&!(((int)line.charAt(i))>=48 &&((int)line.charAt(i))<=57))
             return;
         StringBuilder stringBuilder = new StringBuilder();
-        if ((line.charAt(i)+line.charAt(i+1)+"").equals("0x") || (line.charAt(i)+line.charAt(i+1)+"").equals("0b"))
-            stringBuilder.append('0').append(line.charAt(i++));
+//        if (i+1<line.length()&&(line.charAt(i)+line.charAt(i+1)+"").equals("0x") || (line.charAt(i)+line.charAt(i+1)+"").equals("0b")){
+//            stringBuilder.append('0').append(line.charAt(++i));
+//            i++;
+//        }
         ws();
-        String other = "{}[]() \t\n;,";
+        String other = "{}[]() \t\n;,+-*/=%";
         while (i<line.length()&&!other.contains(line.charAt(i)+"")){
             stringBuilder.append(line.charAt(i++));
             ws();
