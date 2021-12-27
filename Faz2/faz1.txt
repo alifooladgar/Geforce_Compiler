@@ -1,0 +1,35 @@
+int ali(){
+int a= 5;
+a =a+1;
+}
+while (1){
+int c = 5;
+}
+else {
+}
+int main() 
+{
+int arr[6]; 
+int sum = 0;
+int sumo = 0;
+int sumt = 0;
+int mul = 0;
+arr[0] = 0x12;
+arr[1] = 0x03;
+mul = arr[0] * arr[1];
+sumo = mul + sum ;
+sum = sumo + sumt ;
+arr[2] = 0x11;
+arr[3] = 0x04;
+mul = arr[2] * arr[3];
+sumo = mul + sum ;
+sum = sumo + sumt ;
+mul = arr[4] * arr[5];
+sumo = mul + sum ;
+sum = sumo + sumt ;
+int number = 3 ;
+int total = number / sum ;
+int end = 1 ;
+if(end)
+   return 0 ;
+}
