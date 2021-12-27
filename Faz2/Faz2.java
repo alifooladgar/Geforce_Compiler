@@ -1,10 +1,10 @@
+package com.company.sample;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Scanner;
-
 public class Faz2 {
     static FileOutputStream fout;
     static int i=0;
@@ -48,7 +48,7 @@ public class Faz2 {
                     ifStmt();
                     break;
                 case "void":
-                    funcStmt();
+                    funcStmt("void");
                     break;
                 case "else":
                     elseStmt();
@@ -63,39 +63,34 @@ public class Faz2 {
                     returnStmt();
                     break;
                 case "int":
-                    fout.write((lineNumber+"keyword :: int"+"\n").getBytes());
                     if (line.contains("("))
-                        funcStmt();
+                        funcStmt("int");
                     else
-                        decStmt();
+                        decStmt("int");
                     break;
                 case "float":
-                    fout.write((lineNumber+"keyword :: float"+"\n").getBytes());
                     if (line.contains("("))
-                        funcStmt();
+                        funcStmt("float");
                     else
-                        decStmt();
+                        decStmt("float");
                     break;
                 case "double":
-                    fout.write((lineNumber+"keyword :: double"+"\n").getBytes());
                     if (line.contains("("))
-                        funcStmt();
+                        funcStmt("double");
                     else
-                        decStmt();
+                        decStmt("double");
                     break;
                 case "long":
-                    fout.write((lineNumber+"keyword :: long"+"\n").getBytes());
                     if (line.contains("("))
-                        funcStmt();
+                        funcStmt("long");
                     else
-                        decStmt();
+                        decStmt("long");
                     break;
                 case "bool":
-                    fout.write((lineNumber+"keyword :: bool"+"\n").getBytes());
                     if (line.contains("("))
-                        funcStmt();
+                        funcStmt("bool");
                     else
-                        decStmt();
+                        decStmt("bool");
                     break;
                 default:
                     idStmt(st.toString());
@@ -224,12 +219,10 @@ public class Faz2 {
         ws();
     }
     // 4
-    static void termStmt()throws IOException{
-        valueStmt();
-        ws();
-    }
     // 5
     static void idStmt(String name)throws IOException{
+        if (name.isEmpty())
+            return;
         ws();
         fout.write((lineNumber + " " + i +" identifier :: "+ name+"\n").getBytes());
         ws();
@@ -239,10 +232,10 @@ public class Faz2 {
         if (i<line.length()&&!((((int)line.charAt(i))>=65 &&((int)line.charAt(i))<=90) || (((int)line.charAt(i))>=97 &&((int)line.charAt(i))<=122)))
             return;
         StringBuilder st = new StringBuilder();
-        String others = ".,<>(){}, \t\n;-=+*-/%";
-        int index=i;
-        while (i<line.length()&&!others.contains(line.charAt(index)+""))
-            st.append(line.charAt(index++));
+        String others = "., < >(){}, \t\n;-=+*-/%";
+        //int index=i;
+        while (i<line.length()&&!others.contains(line.charAt(i)+""))
+            st.append(line.charAt(i++));
         // array
         if (st.toString().contains("[")){
             StringBuilder stringBuilder = new StringBuilder();
@@ -269,8 +262,8 @@ public class Faz2 {
             ws();
         }
         else
-            fout.write((lineNumber+"identifier :: "+st.toString()+"\n").getBytes());
-        i=index;
+            fout.write((lineNumber+"identifier :: "+st+"\n").getBytes());
+        //i=index;
     }
     // 6
     static void valueStmt()throws IOException{
@@ -281,12 +274,12 @@ public class Faz2 {
         else{
             ws();
             StringBuilder st = new StringBuilder();
-            String others = "(){}, \t\n;+-*/";
-            int index=i;
+            String others = "(){}<>, \t\n;+-*/=";
+            //int index=i;
             ws();
-            while (i<line.length()&&!others.contains(line.charAt(index)+"")){
-                st.append(line.charAt(index));
-                index++;
+            while (i<line.length()&&!others.contains(line.charAt(i)+"")){
+                st.append(line.charAt(i));
+                i++;
             }
             ws();
             if (st.toString().equals("true"))
@@ -295,7 +288,7 @@ public class Faz2 {
                 fout.write((lineNumber + " " + i +" boolean :: false"+"\n").getBytes());
             else if (!others.contains(st.toString()))
                 idStmt(st.toString());
-            i=index;
+            //i=index;
             ws();
         }
         ws();
@@ -309,11 +302,11 @@ public class Faz2 {
     // 14
     static void exprStmt()throws IOException{
         ws();
-        termStmt();
+        valueStmt();
         ws();
         relOpStmt();
         ws();
-        termStmt();
+        valueStmt();
         ws();
     }
     // 13
@@ -321,11 +314,13 @@ public class Faz2 {
         ws();
         idStmt();
         ws();
-        fout.write((lineNumber+"operator :: ="+"\n").getBytes());
+        if (i<line.length()&&isOp(line.charAt(i)))
+            fout.write((lineNumber+"operator :: "+line.charAt(i++)+"\n").getBytes());
         ws();
         valueStmt();
         ws();
-        fout.write((lineNumber+"punctuation :: ;"+"\n").getBytes());
+        if (i<line.length()&&isPunc(line.charAt(i)))
+            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
     }
     // 12
@@ -339,7 +334,8 @@ public class Faz2 {
         ws();
     }
     // 11
-    static void funcStmt()throws IOException{
+    static void funcStmt(String type)throws IOException{
+        fout.write((lineNumber+"keyword :: "+ type+"\n").getBytes());
         ws();
         idStmt();
         ws();
@@ -362,6 +358,22 @@ public class Faz2 {
     // 15
     static void decStmt()throws IOException{
         ws();
+        typeStmt();
+        ws();
+        idStmt();
+        ws();
+        if (i<line.length()&&line.charAt(i)=='=') {
+            fout.write((lineNumber + " " + i +" operator :: "+line.charAt(i++)+"\n").getBytes());
+            valueStmt();
+            ws();
+        }
+        if (i<line.length()&&isPunc(line.charAt(i)))
+            fout.write((lineNumber + " " + i +" punctuation :: "+line.charAt(i++)+"\n").getBytes());
+        ws();
+    }
+    static void decStmt(String type)throws IOException{
+        ws();
+        fout.write((lineNumber+"keyword :: "+ type+"\n").getBytes());
         idStmt();
         ws();
         if (i<line.length()&&line.charAt(i)=='=') {
@@ -382,7 +394,7 @@ public class Faz2 {
         if ((line.charAt(i)+line.charAt(i+1)+"").equals("0x") || (line.charAt(i)+line.charAt(i+1)+"").equals("0b"))
             stringBuilder.append('0').append(line.charAt(i++));
         ws();
-        String other = "{}[] \t\n;,";
+        String other = "{}[]() \t\n;,";
         while (i<line.length()&&!other.contains(line.charAt(i)+"")){
             stringBuilder.append(line.charAt(i++));
             ws();
@@ -396,7 +408,7 @@ public class Faz2 {
         return others.contains(in+"");
     }
     static boolean isOp(char in){
-        String others = "+-*/%";
+        String others = "+-*/%=";
         return others.contains(in+"");
     }
     static boolean isKeyword(String in){
@@ -404,7 +416,13 @@ public class Faz2 {
         return keys.contains(in);
     }
     // 16
-    static void typeStmt(){
-        
+    static void typeStmt() throws IOException {
+        StringBuilder st = new StringBuilder();
+        String other =" \n\t.;+-*/%";
+        while(!other.contains(line.charAt(i)+""))
+            st.append(line.charAt(i++));
+        if (isKeyword(st.toString()))
+            fout.write((lineNumber+"keyword :: "+ st+"\n").getBytes());
+        else idStmt(st.toString());
     }
 }
