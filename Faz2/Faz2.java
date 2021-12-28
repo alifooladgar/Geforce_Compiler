@@ -8,7 +8,6 @@ public class Faz2 {
     static FileOutputStream fout;
     static int i=0;
     static String line;
-    static int lineNumber =0;
     public static void main(String[] args) throws IOException {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File("C:\\Users\\Admin\\Desktop"));
@@ -28,13 +27,12 @@ public class Faz2 {
         ////////////////////////// lexical analysis (state)
         while (sc.hasNextLine()){
             line = sc.nextLine();
-            lineNumber++;
             ws();
             String others = "(){}, \t\n;";
             StringBuilder st = new StringBuilder();
             if (i<line.length()&&others.contains(line.charAt(i)+""))
                 if(isPunc(line.charAt(i)))
-                    fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+                    fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
             if (i>=line.length()){
                 i=0;
                 continue;}
@@ -110,72 +108,72 @@ public class Faz2 {
     }
     // 1
     static void ifStmt() throws IOException {
-        fout.write((lineNumber+"keyword :: if\n").getBytes());
+        fout.write(("keyword :: if\n").getBytes());
         ws();
         if(isPunc(line.charAt(i)))
-            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
         exprStmt();
         ws();
         if(i<line.length()&&isPunc(line.charAt(i)))
-            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
         if (i<line.length()&&line.charAt(i)!='\n')
             if(isPunc(line.charAt(i)))
-                fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+                fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
     }
     // 9
     static void elseStmt() throws IOException {
         ws();
-        fout.write((lineNumber+"keyword :: else"+"\n").getBytes());
+        fout.write(("keyword :: else"+"\n").getBytes());
         ws();
         if (line.charAt(i)!='\n')
             if(isPunc(line.charAt(i)))
-                fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+                fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
     }
     // 7
     static void forStmt()throws IOException{
-        fout.write((lineNumber+"keyword :: for"+"\n").getBytes());
+        fout.write(("keyword :: for"+"\n").getBytes());
         ws();
         if(i<line.length()&&isPunc(line.charAt(i)))
-            fout.write((lineNumber + " " + i +" punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
         decStmt();
         ws();
         if(i<line.length()&&isPunc(line.charAt(i)))
-            fout.write((lineNumber + " " + i +"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
         exprStmt();
         ws();
         if(i<line.length()&&isPunc(line.charAt(i)))
-            fout.write((lineNumber + " " + i +"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
         operationStmt();
         ws();
         if(i<line.length()&&isPunc(line.charAt(i)))
-            fout.write((lineNumber + " " + i +"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
         if(i<line.length()&&isPunc(line.charAt(i)))
-            fout.write((lineNumber + " " + i +"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
     }
     // 10
     static void whileStmt()throws IOException{
         ws();
-        fout.write((lineNumber+"keyword :: while"+"\n").getBytes());
+        fout.write(("keyword :: while"+"\n").getBytes());
         ws();
         if(isPunc(line.charAt(i)))
-            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
         exprStmt();
         ws();
         if(isPunc(line.charAt(i)))
-            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
         if(isPunc(line.charAt(i)))
-            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
     }
     // 2
@@ -193,27 +191,27 @@ public class Faz2 {
         }
         switch (st.toString()){
             case ">":
-                fout.write((lineNumber + " " + i +" relOp :: >"+"\n").getBytes());
+                fout.write(("relOp :: >"+"\n").getBytes());
                 ws();
                 break;
             case "<":
-                fout.write((lineNumber + " " + i +" relOp :: <"+"\n").getBytes());
+                fout.write(("relOp :: <"+"\n").getBytes());
                 ws();
                 break;
             case "!=":
-                fout.write((lineNumber + " " + i  +" relOp :: !="+"\n").getBytes());
+                fout.write(("relOp :: !="+"\n").getBytes());
                 ws();
                 break;
             case "==":
-                fout.write((lineNumber + " " + i +" relOp :: =="+"\n").getBytes());
+                fout.write(("relOp :: =="+"\n").getBytes());
                 ws();
                 break;
             case ">=":
-                fout.write((lineNumber + " " + i +" relOp :: >="+"\n").getBytes());
+                fout.write(("relOp :: >="+"\n").getBytes());
                 ws();
                 break;
             case "<=":
-                fout.write((lineNumber + " " + i  +" relOp :: <="+"\n").getBytes());
+                fout.write(("relOp :: <="+"\n").getBytes());
                 ws();
                 break;
         }
@@ -233,7 +231,7 @@ public class Faz2 {
 //            }
 //            ws();
 //            idStmt(stringBuilder.toString());
-//            fout.write((lineNumber+"punctuation :: "+name.charAt(index++)+"\n").getBytes());
+//            fout.write(("punctuation :: "+name.charAt(index++)+"\n").getBytes());
 //            ws();
 //            stringBuilder = new StringBuilder();
 //            boolean flag=false;
@@ -244,21 +242,21 @@ public class Faz2 {
 //            }
 //            ws();
 //            if (flag)
-//                fout.write((lineNumber+"number :: "+stringBuilder+"\n").getBytes());
+//                fout.write(("number :: "+stringBuilder+"\n").getBytes());
 //            ws();
-//            fout.write((lineNumber+"punctuation :: "+name.charAt(index)+"\n").getBytes());
+//            fout.write(("punctuation :: "+name.charAt(index)+"\n").getBytes());
 //            ws();
 //        }
         ws();
-        fout.write((lineNumber + " " + i +" identifier :: "+ name+"\n").getBytes());
+        fout.write(("identifier :: "+ name+"\n").getBytes());
         ws();
         if (i<line.length()&&isOp(line.charAt(i)))
-            fout.write((lineNumber+"operator :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("operator :: "+line.charAt(i++)+"\n").getBytes());
         ws();
         valueStmt();
         ws();
         if (i<line.length()&&isPunc(line.charAt(i)))
-            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
     }
     static void idStmt()throws IOException{
@@ -280,7 +278,7 @@ public class Faz2 {
 //            }
 //            ws();
 //            idStmt(stringBuilder.toString());
-//            fout.write((lineNumber+"punctuation :: "+st.toString().charAt(index++)+"\n").getBytes());
+//            fout.write(("punctuation :: "+st.toString().charAt(index++)+"\n").getBytes());
 //            ws();
 //            stringBuilder = new StringBuilder();
 //            boolean flag=false;
@@ -291,23 +289,23 @@ public class Faz2 {
 //            }
 //            ws();
 //            if (flag)
-//                fout.write((lineNumber+"number :: "+stringBuilder+"\n").getBytes());
+//                fout.write(("number :: "+stringBuilder+"\n").getBytes());
 //            ws();
-//            fout.write((lineNumber+"punctuation :: "+st.toString().charAt(index)+"\n").getBytes());
+//            fout.write(("punctuation :: "+st.toString().charAt(index)+"\n").getBytes());
 //            ws();
 //        }
         //else
-            fout.write((lineNumber+"identifier :: "+st+"\n").getBytes());
+            fout.write(("identifier :: "+st+"\n").getBytes());
         //i=index;
         ws();
         // a = 5 +3;
         if (i<line.length()&&isOp(line.charAt(i)))
-            fout.write((lineNumber+"operator :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("operator :: "+line.charAt(i++)+"\n").getBytes());
         ws();
         valueStmt();
         ws();
         if (i<line.length()&&isPunc(line.charAt(i)))
-            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
     }
     // 6
@@ -328,9 +326,9 @@ public class Faz2 {
             }
             ws();
             if (st.toString().equals("true"))
-                fout.write((lineNumber + " " + i +" boolean :: true"+"\n").getBytes());
+                fout.write(("boolean :: true"+"\n").getBytes());
             if (st.toString().equals("false"))
-                fout.write((lineNumber + " " + i +" boolean :: false"+"\n").getBytes());
+                fout.write(("boolean :: false"+"\n").getBytes());
             else if (!others.contains(st.toString()))
                 idStmt(st.toString());
             //i=index;
@@ -338,7 +336,7 @@ public class Faz2 {
         }
         ws();
         while (i<line.length()&&isOp(line.charAt(i))){
-            fout.write((lineNumber + " " + i +" operator :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("operator :: "+line.charAt(i++)+"\n").getBytes());
             idStmt();
             numberStmt();
         }
@@ -363,43 +361,43 @@ public class Faz2 {
         idStmt();
         ws();
         if (i<line.length()&&isOp(line.charAt(i)))
-            fout.write((lineNumber+"operator :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("operator :: "+line.charAt(i++)+"\n").getBytes());
         ws();
         valueStmt();
         ws();
         if (i<line.length()&&isPunc(line.charAt(i)))
-            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
     }
     // 12
     static void returnStmt()throws IOException{
         ws();
-        fout.write((lineNumber+"keyword :: return"+"\n").getBytes());
+        fout.write(("keyword :: return"+"\n").getBytes());
         ws();
         valueStmt();
         ws();
-        fout.write((lineNumber+"punctuation :: ;"+"\n").getBytes());
+        fout.write(("punctuation :: ;"+"\n").getBytes());
         ws();
     }
     // 11
     static void funcStmt(String type)throws IOException{
-        fout.write((lineNumber+"keyword :: "+ type+"\n").getBytes());
+        fout.write(("keyword :: "+ type+"\n").getBytes());
         ws();
         idStmt();
         ws();
         if (i<line.length()&&isPunc(line.charAt(i))){
-            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
             ws();
         }
         while(i<line.length()&&!isPunc(line.charAt(i)))
             decStmt();
         ws();
         if (i<line.length()&&isPunc(line.charAt(i))){
-            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
             ws();
         }
         if (i<line.length()&&isPunc(line.charAt(i))){
-            fout.write((lineNumber+"punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
             ws();
         }
     }
@@ -411,26 +409,26 @@ public class Faz2 {
         idStmt();
         ws();
         if (i<line.length()&&line.charAt(i)=='=') {
-            fout.write((lineNumber + " " + i +" operator :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write((" operator :: "+line.charAt(i++)+"\n").getBytes());
             valueStmt();
             ws();
         }
         if (i<line.length()&&isPunc(line.charAt(i)))
-            fout.write((lineNumber + " " + i +" punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
     }
     static void decStmt(String type)throws IOException{
         ws();
-        fout.write((lineNumber+"keyword :: "+ type+"\n").getBytes());
+        fout.write(("keyword :: "+ type+"\n").getBytes());
         idStmt();
         ws();
         if (i<line.length()&&line.charAt(i)=='=') {
-            fout.write((lineNumber + " " + i +" operator :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("operator :: "+line.charAt(i++)+"\n").getBytes());
             valueStmt();
             ws();
         }
         if (i<line.length()&&isPunc(line.charAt(i)))
-            fout.write((lineNumber + " " + i +" punctuation :: "+line.charAt(i++)+"\n").getBytes());
+            fout.write(("punctuation :: "+line.charAt(i++)+"\n").getBytes());
         ws();
     }
     // 3
@@ -449,7 +447,7 @@ public class Faz2 {
             stringBuilder.append(line.charAt(i++));
             ws();
         }
-        fout.write((lineNumber + " " + i +" number :: "+stringBuilder+"\n").getBytes());
+        fout.write(("number :: "+stringBuilder+"\n").getBytes());
         ws();
     }
     //
@@ -472,7 +470,7 @@ public class Faz2 {
         while(!other.contains(line.charAt(i)+""))
             st.append(line.charAt(i++));
         if (isKeyword(st.toString()))
-            fout.write((lineNumber+"keyword :: "+ st+"\n").getBytes());
+            fout.write(("keyword :: "+ st+"\n").getBytes());
         else idStmt(st.toString());
     }
 }
