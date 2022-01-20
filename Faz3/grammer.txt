@@ -1,0 +1,67 @@
+State0 -> IfStmt
+State0 -> ElseStmt
+State0 -> ForStmt
+State0 -> WhileStmt
+State0 -> DecStmt
+State0 -> OperationStmt
+
+State00 -> State0 State00
+State00 -> ''
+
+IfStmt -> if ( ExprStmt ) { State00 }
+
+ElseStmt -> else { State00 }
+
+IdStmt -> id
+
+ForStmt -> for ( DecStmt ExprStmt ; IdStmt = ValueStmt ) { State00 }
+
+WhileStmt -> while ( ExprStmt ) { State00 }
+
+
+TypeStmt -> int
+TypeStmt -> float
+TypeStmt -> long
+TypeStmt -> boolean
+TypeStmt -> double
+TypeStmt -> void
+
+ExprStmt -> ValueStmt RelopStmt ValueStmt
+
+ValueStmt -> true
+ValueStmt -> false
+ValueStmt -> IdStmt ValueStmt2
+ValueStmt -> NumStmt ValueStmt2
+ValueStmt2 -> OpStmt ValueStmt
+ValueStmt2 -> ''
+
+OperationStmt -> IdStmt = ValueStmt ;
+
+NumStmt -> number
+
+RelopStmt -> <
+RelopStmt -> >
+RelopStmt -> ==
+RelopStmt -> !=
+RelopStmt -> >=
+RelopStmt -> <=
+
+OpStmt -> +
+OpStmt -> -
+OpStmt -> *
+OpStmt -> /
+OpStmt -> %
+
+DecStmt -> TypeStmt IdStmt Temp2
+
+Temp2 -> ( Temp3 ) { State00 return ValueStmt ; }
+Temp2 -> Temp ;
+
+Temp -> ''
+Temp -> = ValueStmt
+
+Temp3 -> TypeStmt IdStmt Temp4
+Temp3 -> ''
+
+Temp4 -> , TypeStmt IdStmt Temp4
+Temp4 -> ''
