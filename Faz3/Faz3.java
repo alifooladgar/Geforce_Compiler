@@ -9,6 +9,7 @@ import java.util.*;
 
 public class Faz3 {
     static HashMap<String , String> map;
+    static FileOutputStream fout;
     public static void main(String[] args) throws IOException {
         Tree tree=new Tree();
         tree.root = new Tree.Node("State0" , 0);
@@ -19,7 +20,7 @@ public class Faz3 {
             map.put("State00 , if", "State0 State00");
             map.put("IfStmt , if", "if ( ExprStmt ) { State00 }");
             map.put("ElseStmt , if", "");
-            map.put("State00 , }", "''");
+            map.put("State00 , }", "");
             map.put("State0 , else", "ElseStmt");
             map.put("State00 , else", "State0 State00");
             map.put("ElseStmt , else", "ElseStmt -> else { State00 }");
@@ -41,7 +42,7 @@ public class Faz3 {
             map.put("State00 , double", "State0 State00");
             map.put("State0 , void", "DecStmt");
             map.put("State00 , void", "State0 State00");
-            map.put("State00 , return", "''");
+            map.put("State00 , return", "");
             /////
             map.put("IdStmt , id", "id");
             map.put("ForStmt , for", "for ( DecStmt ExprStmt ; IdStmt = ValueStmt ) { State00 }");
@@ -72,9 +73,9 @@ public class Faz3 {
             map.put("Temp2 , number", "Temp ;");
             map.put("Temp2 , return", "Temp ;");
             map.put("Temp2 , $", "Temp ;");
-            map.put("Temp , ;", "''");
+            map.put("Temp , ;", "");
             map.put("Temp , =", "= ValueStmt");
-            map.put("Temp3 , )", "''");
+            map.put("Temp3 , )", "");
             map.put("Temp3 , int", "TypeStmt IdStmt Temp4");
             map.put("Temp3 , float", "TypeStmt IdStmt Temp4");
             map.put("Temp3 , long", "TypeStmt IdStmt Temp4");
@@ -90,21 +91,21 @@ public class Faz3 {
             map.put("ValueStmt , true", "true");
             map.put("ValueStmt , false", "false");
             map.put("ValueStmt , number", "NumStmt ValueStmt2");
-            map.put("ValueStmt2 , )", "''");
-            map.put("ValueStmt2 , ;", "''");
-            map.put("ValueStmt2 , <", "''");
-            map.put("ValueStmt2 , >", "''");
-            map.put("ValueStmt2 , ==", "''");
-            map.put("ValueStmt2 , !=", "''");
-            map.put("ValueStmt2 , >=", "''");
-            map.put("ValueStmt2 , <=", "''");
+            map.put("ValueStmt2 , )", "");
+            map.put("ValueStmt2 , ;", "");
+            map.put("ValueStmt2 , <", "");
+            map.put("ValueStmt2 , >", "");
+            map.put("ValueStmt2 , ==", "");
+            map.put("ValueStmt2 , !=", "");
+            map.put("ValueStmt2 , >=", "");
+            map.put("ValueStmt2 , <=", "");
             map.put("ValueStmt2 , +", "OpStmt ValueStmt");
             map.put("ValueStmt2 , -", "OpStmt ValueStmt");
             map.put("ValueStmt2 , *", "OpStmt ValueStmt");
             map.put("ValueStmt2 , /", "OpStmt ValueStmt");
             map.put("ValueStmt2 , %", "OpStmt ValueStmt");
             map.put("OperationStmt , id", "IdStmt = ValueStmt ;");
-            map.put("Temp4 , )", "''");
+            map.put("Temp4 , )", "");
             map.put("Temp4 , ,", ", TypeStmt IdStmt Temp4");
             /////Mohammad
             map.put("NumStmt , number", "number");
@@ -116,7 +117,7 @@ public class Faz3 {
             map.put("RelopStmt , <=", "<=");
             map.put("OpStmt , +", "+");
             map.put("OpStmt , -", "-");
-            map.put("OpStmt , ", "");
+            map.put("OpStmt , *", "*");
             map.put("OpStmt , /", "/");
             map.put("OpStmt , %", "%");
             map.put("DecStmt , int", "TypeStmt IdStmt Temp2");
@@ -141,10 +142,10 @@ public class Faz3 {
         String mainaddress = faz2.getParent();
         Scanner scanner = new Scanner(faz2);
         File output = new File(mainaddress+"\\faz3.txt");
-        FileOutputStream fout = new FileOutputStream(output);
+        fout = new FileOutputStream(output);
         //////
         Stack<Tree.Node> stack = new Stack<>();
-        Queue<String> queue = new PriorityQueue<>();
+        Queue<String> queue = new LinkedList<>();
         StringBuilder st = new StringBuilder();
         while (scanner.hasNextLine()){
             String line = scanner.nextLine();
@@ -157,7 +158,7 @@ public class Faz3 {
                     break;
                 case "number":
                     st.append("number").append(" ");
-                    queue.add("id");
+                    queue.add("number");
                     break;
                 case "operator":
                 case "relOp":
@@ -172,6 +173,7 @@ public class Faz3 {
             }
         }
         fout.write(st.toString().getBytes());
+        fout.write("\n-----------------------------------\n".getBytes());
         Tree.Node current = new Tree.Node("State0" , 0);
         stack.push(current);
         tree.root = current;
@@ -179,16 +181,22 @@ public class Faz3 {
         while (stack.size()!=0){
             Tree.Node s = stack.pop();
             String q = queue.peek();
+            //System.out.println(s.value + " , " + q);
             if (s.value.equals(q)){
                 queue.poll();
-                current = current.father;
+                //current = current.father;
             }
             else if (map.containsKey(s.value + " , " + q)){
                 String gr = map.get(s.value + " , " + q);
-                String[] grArr  = gr.split(" ");
                 current = s;
-                for (String i : grArr) {
-                    Tree.Node node = new Tree.Node(i, current.level + 1);
+                if (gr.equals("")){
+                    Tree.Node node = new Tree.Node("ep", current.level + 1);
+                    current.addChild(node);
+                    continue;
+                }
+                String[] grArr  = gr.split(" ");
+                for (int i = grArr.length-1; i >= 0; i--) {
+                    Tree.Node node = new Tree.Node(grArr[i], current.level + 1);
                     current.addChild(node);
                     stack.push(node);
                 }
@@ -223,12 +231,12 @@ class Tree{
             node.father = this;
             isBarg = false;
         }
-        void print(){
-            System.out.print(this.value + " , level = " + this.level + " : ");
+        void print() throws IOException {
+            Faz3.fout.write((this.value + " , level = " + this.level + " : ").getBytes());
             for (Node node : this.children){
-                System.out.print(node.value + " , ");
+                Faz3.fout.write((node.value + " , ").getBytes());
             }
-            System.out.println();
+            Faz3.fout.write(("\n").getBytes());
             for (Node node : this.children){
                 node.print();
             }
