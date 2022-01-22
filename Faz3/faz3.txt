@@ -1,0 +1,1 @@
+int id ( ) { int id = number ; float id = number ; int id = number ; int id = id + id ; for ( int id = number ; id < number ; id = id + number ) { } return number ; } 
