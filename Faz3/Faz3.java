@@ -1,3 +1,5 @@
+package com.company.sample;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -114,7 +116,7 @@ public class Faz3 {
             map.put("RelopStmt , <=", "<=");
             map.put("OpStmt , +", "+");
             map.put("OpStmt , -", "-");
-            map.put("OpStmt , *", "*");
+            map.put("OpStmt , ", "");
             map.put("OpStmt , /", "/");
             map.put("OpStmt , %", "%");
             map.put("DecStmt , int", "TypeStmt IdStmt Temp2");
@@ -141,10 +143,8 @@ public class Faz3 {
         File output = new File(mainaddress+"\\faz3.txt");
         FileOutputStream fout = new FileOutputStream(output);
         //////
-        Stack<String> stack = new Stack<>();
+        Stack<Tree.Node> stack = new Stack<>();
         Queue<String> queue = new PriorityQueue<>();
-        stack.push("$");
-        stack.push("State0");
         StringBuilder st = new StringBuilder();
         while (scanner.hasNextLine()){
             String line = scanner.nextLine();
@@ -172,26 +172,34 @@ public class Faz3 {
             }
         }
         fout.write(st.toString().getBytes());
-        Tree.Node current = tree.root;
+        Tree.Node current = new Tree.Node("State0" , 0);
+        stack.push(current);
+        tree.root = current;
         /////////////
-        while (stack.peek().equals("$")){
-            String s = stack.pop();
+        while (stack.size()!=0){
+            Tree.Node s = stack.pop();
             String q = queue.peek();
-            if (s.equals(q)){
+            if (s.value.equals(q)){
                 queue.poll();
-
+                current = current.father;
+            }
+            else if (map.containsKey(s.value + " , " + q)){
+                String gr = map.get(s.value + " , " + q);
+                String[] grArr  = gr.split(" ");
+                current = s;
+                for (String i : grArr) {
+                    Tree.Node node = new Tree.Node(i, current.level + 1);
+                    current.addChild(node);
+                    stack.push(node);
+                }
             }
             else{
-                String gr = map.get(s + " , " + q);
-                String[] grArr  = gr.split(" ");
-                for (int i=0;i<grArr.length;i++) {
-                    Tree.Node node = new Tree.Node(grArr[i] , current.level+1);
-                    stack.push(grArr[i]);
-                }
-
+                System.out.println("Error in Code !!!");
+                break;
             }
         }
         /////////////
+        tree.root.print();
         System.out.println("faz3 is done");
         Desktop desktop = Desktop.getDesktop();
         desktop.open(output);
@@ -202,13 +210,9 @@ class Tree{
     static class Node{
         String value;
         int level;
+        boolean isBarg = true;
         ArrayList<Node> children = new ArrayList<>();
-        Node father = new Node();
-
-        public Node() {
-
-        }
-
+        Node father;
         public Node(String value, int level) {
             this.value = value;
             this.level = level;
@@ -217,9 +221,17 @@ class Tree{
         public void addChild(Node node){
             children.add(node);
             node.father = this;
+            isBarg = false;
         }
-        public Node getFather(){
-            return this.father;
+        void print(){
+            System.out.print(this.value + " , level = " + this.level + " : ");
+            for (Node node : this.children){
+                System.out.print(node.value + " , ");
+            }
+            System.out.println();
+            for (Node node : this.children){
+                node.print();
+            }
         }
     }
 }
